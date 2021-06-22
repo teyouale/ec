@@ -11,48 +11,48 @@ namespace ec.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MoviesController : ControllerBase
+    public class CompaniesController : ControllerBase
     {
         private readonly MoviesDbContext _context;
 
-        public MoviesController(MoviesDbContext context)
+        public CompaniesController(MoviesDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Movies
+        // GET: api/Companies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<ActionResult<IEnumerable<Company>>> GetCompany()
         {
-            return await _context.Movies.ToListAsync();
+            return await _context.Company.Include(c=>c.Employees).ToListAsync();
         }
 
-        // GET: api/Movies/5
+        // GET: api/Companies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<ActionResult<Company>> GetCompany(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var company = await _context.Company.FindAsync(id);
 
-            if (movie == null)
+            if (company == null)
             {
                 return NotFound();
             }
 
-            return movie;
+            return company;
         }
 
-        // PUT: api/Movies/5
+        // PUT: api/Companies/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        public async Task<IActionResult> PutCompany(int id, Company company)
         {
-            if (id != movie.Movie_Id)
+            if (id != company.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(movie).State = EntityState.Modified;
+            _context.Entry(company).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace ec.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(id))
+                if (!CompanyExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +73,37 @@ namespace ec.Controllers
             return NoContent();
         }
 
-        // POST: api/Movies
+        // POST: api/Companies
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<Company>> PostCompany(Company company)
         {
-            _context.Movies.Add(movie);
+            _context.Company.Add(company);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = movie.Movie_Id }, movie);
+            return CreatedAtAction("GetCompany", new { id = company.Id }, company);
         }
 
-        // DELETE: api/Movies/5
+        // DELETE: api/Companies/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Movie>> DeleteMovie(int id)
+        public async Task<ActionResult<Company>> DeleteCompany(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
-            if (movie == null)
+            var company = await _context.Company.FindAsync(id);
+            if (company == null)
             {
                 return NotFound();
             }
 
-            _context.Movies.Remove(movie);
+            _context.Company.Remove(company);
             await _context.SaveChangesAsync();
 
-            return movie;
+            return company;
         }
 
-        private bool MovieExists(int id)
+        private bool CompanyExists(int id)
         {
-            return _context.Movies.Any(e => e.Movie_Id == id);
+            return _context.Company.Any(e => e.Id == id);
         }
     }
 }
